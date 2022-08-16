@@ -1,7 +1,15 @@
+import {Col,Row, Typography} from 'antd';
+import CreateEmployee from 'modules/create';
 import React from 'react';
+const {Title} = Typography;
 
-const CreateEmployee = () => {
-  return <div>CreateEmployee</div>;
+const CreateEmployeePage = () => {
+  return (
+    <>
+      <Title>Create Employee</Title>
+      <CreateEmployee />
+    </>
+  );
 };
 
-export default CreateEmployee;
+export default CreateEmployeePage;

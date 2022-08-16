@@ -1,6 +1,7 @@
 export const ROUTES = {
   HOME: '/',
-  EDIT: '/edit',
+  EDIT: '/edit/:id',
   CREATE: '/create',
+  DETAIL: '/detail/:id',
   NOT_FOUND: '*',
 };

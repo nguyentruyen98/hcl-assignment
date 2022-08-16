@@ -1,7 +1,7 @@
+import Edit from 'modules/edit';
 import React from 'react';
-
-const Edit = () => {
-  return <div>Edit</div>;
+const EditPage = () => {
+  return <Edit />;
 };
 
-export default Edit;
+export default EditPage;

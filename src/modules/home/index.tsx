@@ -3,14 +3,10 @@ import type {ColumnsType} from 'antd/es/table';
 import {CONFIG} from 'configs/index';
 import {API_METHODS} from 'contants/index';
 import useApi, {Api} from 'hooks/useApi';
+import {ITableColumnValue} from 'modules/home/index.d';
 import {useNavigate} from 'react-router';
 import {ROUTES} from 'routes/routes';
-interface ITableColumnValue {
-  id: number;
-  employee_name: string;
-  employee_salary: number;
-  employee_age: number;
-}
+
 const Home = () => {
   const navigate = useNavigate();
 
@@ -20,8 +16,11 @@ const Home = () => {
     loadInitialState: true,
   });
 
-  const handleEditEmployee = () => {
-    navigate(ROUTES.EDIT);
+  const handleEditEmployee = (record: ITableColumnValue) => {
+    navigate(ROUTES.EDIT.replace(':id', `${record.id}`), {state: record});
+  };
+  const handleRowClick = (id: number) => {
+    navigate(ROUTES.DETAIL.replace(':id', `${id}`));
   };
   const handleDeleteEmployee = async (id: number) => {
     try {
@@ -38,7 +37,14 @@ const Home = () => {
 
   const columns: ColumnsType<ITableColumnValue> = [
     {title: 'ID', dataIndex: 'id', key: 'id'},
-    {title: 'Employee Name', dataIndex: 'employee_name', key: 'employee_name'},
+    {
+      title: 'Employee Name',
+      dataIndex: 'employee_name',
+      key: 'employee_name',
+      render(value, record) {
+        return <a onClick={() => handleRowClick(record.id)}>{value}</a>;
+      },
+    },
     {
       title: 'Employee Salary',
       dataIndex: 'employee_salary',
@@ -56,9 +62,9 @@ const Home = () => {
       key: 'id',
       align: 'center',
 
-      render: (id: number) => (
+      render: (id: number, record) => (
         <>
-          <Button onClick={handleEditEmployee} type="primary">
+          <Button onClick={() => handleEditEmployee(record)} type="primary">
             Edit
           </Button>{' '}
           <Button onClick={() => handleDeleteEmployee(id)} danger>
@@ -76,6 +82,13 @@ const Home = () => {
         columns={columns}
         dataSource={data?.data}
         rowKey="id"
+        // onRow={(record: ITableColumnValue) => {
+        //   return {
+        //     onClick: () => {
+        //       handleRowClick(record.id);
+        //     },
+        //   };
+        // }}
       />
     </>
   );
