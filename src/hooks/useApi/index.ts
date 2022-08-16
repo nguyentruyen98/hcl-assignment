@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {AnyObject} from 'contants/type';
 import {IApiProps, IUseApiProps} from 'hooks/useApi/index.d';
-
+import get from 'lodash/get';
 import {useEffect, useState} from 'react';
 
 export const Api = async ({url, method = 'get', params, data}: IApiProps) => {
@@ -52,11 +52,11 @@ const useApi = ({
         setData(response);
       } catch (error: any) {
         // handle error here
-        const msg = error?.response.data.message ?? Error;
+        const msg = get(error, 'response.data.message', 'Error');
         setErrorMsg(msg);
       } finally {
         // dispatch(setLoading(false));
-        // setApiLoading(false);
+        setApiLoading(false);
       }
     };
     if (currentInitialState) {
@@ -64,7 +64,6 @@ const useApi = ({
     } else {
       setApiLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUrl, currentMethod, currentParams, currentInitialState, errorMsg]);
   return {
     data,
