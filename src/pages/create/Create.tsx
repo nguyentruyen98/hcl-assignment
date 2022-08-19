@@ -1,4 +1,4 @@
-import {Col,Row, Typography} from 'antd';
+import {Typography} from 'antd';
 import CreateEmployee from 'modules/create';
 import React from 'react';
 const {Title} = Typography;

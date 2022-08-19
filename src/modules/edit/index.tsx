@@ -1,79 +1,106 @@
 import {Button, Col, Input, Row} from 'antd';
+import Spin from 'components/spin/Spin';
+import {CONFIG} from 'configs/index';
+import {API_METHODS} from 'contants';
+import {Api} from 'hooks/useApi';
 import useForm from 'hooks/useForm';
 import {ITableColumnValue} from 'modules/home/index.d';
-import React from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
+import {useState} from 'react';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {ROUTES} from 'routes/routes';
-
-interface ILocationState {
-  state: ITableColumnValue;
-}
+import {error, success} from 'utils/message';
 
 const Edit = () => {
   const location = useLocation();
+  let {id} = useParams();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const state = location.state as ITableColumnValue;
-  const {employee_age, employee_name, employee_salary, id: employee_id} = state;
+  const {firstName, lastName, email, university} = state;
   const {formData, handleInputChange} = useForm({
-    id: employee_id,
-    name: employee_name,
-    age: employee_age,
-    salary: employee_salary,
+    firstNameForm: firstName,
+    emailForm: email,
+    lastNameForm: lastName,
+    universityForm: university,
   });
-  const {name, age, salary, id} = formData as {
-    name: string;
-    age: string;
-    salary: string;
-    id: number;
+  const {firstNameForm, lastNameForm, universityForm, emailForm} = formData as {
+    firstNameForm: string;
+    lastNameForm: string;
+    universityForm: string;
+    emailForm: string;
   };
-  const handleSubmit = () => {};
+  const handleSubmit = () => {
+    setLoading(true);
+    try {
+      const data = {
+        firstName: firstNameForm,
+        lastName: lastNameForm,
+        university: universityForm,
+        email: emailForm,
+      };
+      Api({
+        url: `${CONFIG.API.EMPLOYEE}/users/${id}`,
+        method: API_METHODS.PUT,
+        data: JSON.stringify(data),
+      });
+      success();
+      navigate(ROUTES.HOME);
+    } catch (err) {
+      console.log(err);
+      error();
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleGoBack = () => {
     navigate(ROUTES.HOME);
   };
   return (
-    <Row gutter={[12, 12]} justify="end">
-      <Col span={4}>
-        <Input
-          placeholder="Typpe name..."
-          name="id"
-          value={id}
-          onChange={handleInputChange}
-          disabled={true}
-        />
-      </Col>
-      <Col span={20}>
-        <Input
-          placeholder="Typpe name..."
-          name="name"
-          value={name}
-          onChange={handleInputChange}
-        />
-      </Col>
-      <Col span={12}>
-        <Input
-          placeholder="Typpe age..."
-          name="age"
-          value={age}
-          onChange={handleInputChange}
-        />
-      </Col>
-      <Col span={12}>
-        <Input
-          placeholder="Typpe salary..."
-          name="salary"
-          value={salary}
-          onChange={handleInputChange}
-        />
-      </Col>
-      <Col>
-        <Button onClick={handleGoBack}>Back</Button>
-      </Col>
-      <Col>
-        <Button type="primary" onClick={handleSubmit}>
-          Change
-        </Button>
-      </Col>
-    </Row>
+    <>
+      {loading && <Spin />}
+      <Row gutter={[12, 12]} justify="end">
+        <Col span={12}>
+          <Input
+            placeholder="Type first name"
+            name="firstNameForm"
+            value={firstNameForm}
+            onChange={handleInputChange}
+          />
+        </Col>
+        <Col span={12}>
+          <Input
+            placeholder="Type last name"
+            name="lastNameForm"
+            value={lastNameForm}
+            onChange={handleInputChange}
+          />
+        </Col>
+        <Col span={12}>
+          <Input
+            placeholder="Type email"
+            name="emailForm"
+            value={emailForm}
+            onChange={handleInputChange}
+          />
+        </Col>
+        <Col span={12}>
+          <Input
+            placeholder="Type university"
+            name="universityForm"
+            value={universityForm}
+            onChange={handleInputChange}
+          />
+        </Col>
+        <Col>
+          <Button onClick={handleGoBack}>Back</Button>
+        </Col>
+        <Col>
+          <Button type="primary" onClick={handleSubmit}>
+            Change
+          </Button>
+        </Col>
+      </Row>
+    </>
   );
 };
 
