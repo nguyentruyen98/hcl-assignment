@@ -1,17 +1,17 @@
 import {Button, Col, Input, Row} from 'antd';
 import Spin from 'components/spin/Spin';
 import {CONFIG} from 'configs/index';
-import {API_METHODS} from 'contants/index';
+import {ALERT_TYPE, API_METHODS} from 'contants/index';
+import {useToasts} from 'contexts/Toast';
 import {Api} from 'hooks/useApi';
 import useForm from 'hooks/useForm';
 import {useState} from 'react';
 import {useNavigate} from 'react-router';
 import {ROUTES} from 'routes/routes';
-import {error, success} from 'utils/message';
-
 const CreateEmployee = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const message = useToasts();
 
   const {formData, handleInputChange} = useForm({
     firstName: '',
@@ -31,11 +31,11 @@ const CreateEmployee = () => {
         method: API_METHODS.POST,
         data: JSON.stringify(formData),
       });
-      success();
+      message('Success', ALERT_TYPE.SUCCESS);
       navigate(ROUTES.HOME);
     } catch (err) {
       console.log(err);
-      error();
+      message('Fail', ALERT_TYPE.FAIL);
     } finally {
       setLoading(false);
     }

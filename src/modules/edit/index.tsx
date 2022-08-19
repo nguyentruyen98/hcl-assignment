@@ -1,16 +1,16 @@
 import {Button, Col, Input, Row} from 'antd';
 import Spin from 'components/spin/Spin';
 import {CONFIG} from 'configs/index';
-import {API_METHODS} from 'contants';
+import {ALERT_TYPE, API_METHODS} from 'contants';
+import {useToasts} from 'contexts/Toast';
 import {Api} from 'hooks/useApi';
 import useForm from 'hooks/useForm';
 import {ITableColumnValue} from 'modules/home/index.d';
 import {useState} from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {ROUTES} from 'routes/routes';
-import {error, success} from 'utils/message';
-
 const Edit = () => {
+  const message = useToasts();
   const location = useLocation();
   let {id} = useParams();
   const navigate = useNavigate();
@@ -43,11 +43,11 @@ const Edit = () => {
         method: API_METHODS.PUT,
         data: JSON.stringify(data),
       });
-      success();
+      message('Success', ALERT_TYPE.SUCCESS);
       navigate(ROUTES.HOME);
     } catch (err) {
       console.log(err);
-      error();
+      message('Fail', ALERT_TYPE.FAIL);
     } finally {
       setLoading(false);
     }

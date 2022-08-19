@@ -2,17 +2,17 @@ import {Avatar, Button, Table} from 'antd';
 import type {ColumnsType} from 'antd/es/table';
 import Spin from 'components/spin/Spin';
 import {CONFIG} from 'configs/index';
-import {API_METHODS} from 'contants/index';
+import {ALERT_TYPE, API_METHODS} from 'contants/index';
+import {useToasts} from 'contexts/Toast';
 import useApi, {Api} from 'hooks/useApi';
 import {ITableColumnValue} from 'modules/home/index.d';
 import {useState} from 'react';
 import {useNavigate} from 'react-router';
 import {ROUTES} from 'routes/routes';
-import {error, success} from 'utils/message';
-
 const Home = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const message = useToasts();
 
   const {data, apiLoading, setCurrentParams} = useApi({
     url: `${CONFIG.API.EMPLOYEE}/users`,
@@ -33,10 +33,10 @@ const Home = () => {
         url: `${CONFIG.API.EMPLOYEE}/users/${id}`,
         method: API_METHODS.DELETE,
       });
-      success();
+      message('Success', ALERT_TYPE.SUCCESS);
     } catch (err) {
       console.log(err);
-      error();
+      message('Fail', ALERT_TYPE.FAIL);
     } finally {
       setCurrentParams({});
       setLoading(false);

@@ -6,3 +6,6 @@ export type ApiMethodsType = Record<
   'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
   MethodsType
 >;
+
+// export type AlertType = 'success' | 'fail';
+export type AlertType = Record<'SUCCESS' | 'FAIL', 'success' | 'fail'>;

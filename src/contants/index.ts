@@ -1,4 +1,4 @@
-import {ApiMethodsType} from 'contants/type';
+import {AlertType,ApiMethodsType} from 'contants/type';
 
 export const API_METHODS: ApiMethodsType = {
   GET: 'get',
@@ -6,4 +6,8 @@ export const API_METHODS: ApiMethodsType = {
   DELETE: 'delete',
   PUT: 'put',
   PATCH: 'patch',
+};
+export const ALERT_TYPE: AlertType = {
+  SUCCESS: 'success',
+  FAIL: 'fail',
 };
