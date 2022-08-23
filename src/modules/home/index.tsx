@@ -1,24 +1,23 @@
 import {Avatar, Button, Table} from 'antd';
 import type {ColumnsType} from 'antd/es/table';
-import Spin from 'components/spin/Spin';
 import {CONFIG} from 'configs/index';
 import {ALERT_TYPE, API_METHODS} from 'contants/index';
 import {useToasts} from 'contexts/Toast';
-import useApi, {Api} from 'hooks/useApi';
+import {Api} from 'hooks/useApi';
 import {ITableColumnValue} from 'modules/home/index.d';
-import {useState} from 'react';
+import {useEffect} from 'react';
 import {useNavigate} from 'react-router';
 import {ROUTES} from 'routes/routes';
+import {useDispatch, useSelector} from 'stores';
+import {getEmployeeList} from 'stores/employee';
 const Home = () => {
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const message = useToasts();
-
-  const {data, apiLoading, setCurrentParams} = useApi({
-    url: `${CONFIG.API.EMPLOYEE}/users`,
-    method: API_METHODS.GET,
-    loadInitialState: true,
-  });
+  const dispatch = useDispatch();
+  const employeeState = useSelector(state => state.employee);
+  useEffect(() => {
+    dispatch(getEmployeeList());
+  }, []);
 
   const handleEditEmployee = (record: ITableColumnValue) => {
     navigate(ROUTES.EDIT.replace(':id', `${record.id}`), {state: record});
@@ -28,7 +27,6 @@ const Home = () => {
   };
   const handleDeleteEmployee = async (id: number) => {
     try {
-      setLoading(true);
       await Api({
         url: `${CONFIG.API.EMPLOYEE}/users/${id}`,
         method: API_METHODS.DELETE,
@@ -38,8 +36,7 @@ const Home = () => {
       console.log(err);
       message('Fail', ALERT_TYPE.FAIL);
     } finally {
-      setCurrentParams({});
-      setLoading(false);
+      // setCurrentParams({});
     }
   };
 
@@ -95,16 +92,12 @@ const Home = () => {
     },
   ];
   return (
-    <>
-      {loading && <Spin />}
-      <Table
-        loading={apiLoading}
-        columns={columns}
-        pagination={{pageSize: 5}}
-        dataSource={data?.users}
-        rowKey="id"
-      />
-    </>
+    <Table
+      columns={columns}
+      pagination={{pageSize: 5}}
+      dataSource={employeeState.employee}
+      rowKey="id"
+    />
   );
 };
 

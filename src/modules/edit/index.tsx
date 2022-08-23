@@ -1,12 +1,10 @@
 import {Button, Col, Input, Row} from 'antd';
-import Spin from 'components/spin/Spin';
 import {CONFIG} from 'configs/index';
 import {ALERT_TYPE, API_METHODS} from 'contants';
 import {useToasts} from 'contexts/Toast';
 import {Api} from 'hooks/useApi';
 import useForm from 'hooks/useForm';
 import {ITableColumnValue} from 'modules/home/index.d';
-import {useState} from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {ROUTES} from 'routes/routes';
 const Edit = () => {
@@ -14,7 +12,6 @@ const Edit = () => {
   const location = useLocation();
   let {id} = useParams();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const state = location.state as ITableColumnValue;
   const {firstName, lastName, email, university} = state;
   const {formData, handleInputChange} = useForm({
@@ -30,7 +27,6 @@ const Edit = () => {
     emailForm: string;
   };
   const handleSubmit = () => {
-    setLoading(true);
     try {
       const data = {
         firstName: firstNameForm,
@@ -49,7 +45,6 @@ const Edit = () => {
       console.log(err);
       message('Fail', ALERT_TYPE.FAIL);
     } finally {
-      setLoading(false);
     }
   };
   const handleGoBack = () => {
@@ -57,7 +52,6 @@ const Edit = () => {
   };
   return (
     <>
-      {loading && <Spin />}
       <Row gutter={[12, 12]} justify="end">
         <Col span={12}>
           <Input

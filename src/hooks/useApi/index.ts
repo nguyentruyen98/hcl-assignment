@@ -3,6 +3,8 @@ import {AnyObject} from 'contants/type';
 import {IApiProps, IUseApiProps} from 'hooks/useApi/index.d';
 import get from 'lodash/get';
 import {useEffect, useState} from 'react';
+import {useDispatch} from 'stores';
+import {setLoading} from 'stores/application/application';
 
 export const Api = async ({url, method = 'get', params, data}: IApiProps) => {
   try {
@@ -21,6 +23,7 @@ export const Api = async ({url, method = 'get', params, data}: IApiProps) => {
     // handle error here
     const dataResponse = 'Something went wrong. Please try again.';
     throw dataResponse;
+  } finally {
   }
 };
 
@@ -38,11 +41,11 @@ const useApi = ({
     useState(loadInitialState);
   const [apiLoading, setApiLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState();
-  //   const dispatch = useApplicationDispatch();
+  const dispatch = useDispatch();
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // dispatch(setLoading(true));
+        dispatch(setLoading(true));
         setApiLoading(true);
         const response = await Api({
           url,
@@ -55,7 +58,7 @@ const useApi = ({
         const msg = get(error, 'response.data.message', 'Error');
         setErrorMsg(msg);
       } finally {
-        // dispatch(setLoading(false));
+        dispatch(setLoading(false));
         setApiLoading(false);
       }
     };
