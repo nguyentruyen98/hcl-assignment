@@ -1,5 +1,11 @@
-import {configureStore, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {apiSlice} from 'stores/api/employeeSlice';
+import {
+  AnyAction,
+  AsyncThunk,
+  configureStore,
+  createSlice,
+  PayloadAction,
+} from '@reduxjs/toolkit';
+// import {apiSlice} from 'stores/api/employeeSlice';
 
 export interface IApplicationState {
   loading: boolean;
@@ -11,55 +17,52 @@ const initialState: IApplicationState = {
   message: '',
   alertType: 'SUCCESS',
 };
-
+type GenericAsyncThunk = AsyncThunk<unknown, unknown, any>;
+type PendingAction = ReturnType<GenericAsyncThunk['pending']>;
+type RejectedAction = ReturnType<GenericAsyncThunk['rejected']>;
+type FulfilledAction = ReturnType<GenericAsyncThunk['fulfilled']>;
+function isPendingAction(action: AnyAction): action is PendingAction {
+  return action.type.endsWith('/pending');
+}
+function isFulfilledAction(action: AnyAction): action is FulfilledAction {
+  return action.type.endsWith('/fulfilled');
+}
+function isRejectedAction(action: AnyAction): action is RejectedAction {
+  return action.type.endsWith('/rejected');
+}
 export const applicationSlice = createSlice({
   name: 'application',
   initialState,
   reducers: {
     setLoading: (state, action: PayloadAction<boolean>) => {
+      console.log(action);
       state.loading = action.payload;
     },
   },
   extraReducers: builder => {
     builder
-      .addMatcher(apiSlice.endpoints.deleteEmployee.matchPending, state => {
+      .addMatcher(isPendingAction, state => {
         state.loading = true;
       })
-      .addMatcher(apiSlice.endpoints.deleteEmployee.matchFulfilled, state => {
+      .addMatcher(isFulfilledAction, (state, action: AnyAction) => {
         state.loading = false;
-        state.alertType = 'SUCCESS';
-        state.message = 'Success';
+        console.log(action);
+
+        if (action?.meta?.arg?.type === 'query') {
+          state.message = '';
+        } else if (action?.meta?.arg?.type === 'mutation') {
+          state.message = 'Success';
+          state.alertType = 'SUCCESS';
+        }
       })
-      .addMatcher(apiSlice.endpoints.deleteEmployee.matchRejected, state => {
+      .addMatcher(isRejectedAction, (state, action: AnyAction) => {
         state.loading = false;
-        state.alertType = 'FAIL';
-        state.message = 'Fail';
-      })
-      .addMatcher(apiSlice.endpoints.createEmployee.matchPending, state => {
-        state.loading = true;
-      })
-      .addMatcher(apiSlice.endpoints.createEmployee.matchFulfilled, state => {
-        state.loading = false;
-        state.alertType = 'SUCCESS';
-        state.message = 'Success';
-      })
-      .addMatcher(apiSlice.endpoints.createEmployee.matchRejected, state => {
-        state.loading = false;
-        state.alertType = 'FAIL';
-        state.message = 'Fail';
-      })
-      .addMatcher(apiSlice.endpoints.updateEmployee.matchPending, state => {
-        state.loading = true;
-      })
-      .addMatcher(apiSlice.endpoints.updateEmployee.matchFulfilled, state => {
-        state.loading = false;
-        state.alertType = 'SUCCESS';
-        state.message = 'Success';
-      })
-      .addMatcher(apiSlice.endpoints.updateEmployee.matchRejected, state => {
-        state.loading = false;
-        state.alertType = 'FAIL';
-        state.message = 'Fail';
+        if (action?.meta?.arg?.type === 'query') {
+          state.message = '';
+        } else if (action?.meta?.arg?.type === 'mutation') {
+          state.message = 'Success';
+          state.alertType = 'SUCCESS';
+        }
       });
   },
 });
