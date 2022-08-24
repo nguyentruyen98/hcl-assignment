@@ -4,21 +4,28 @@ import {ALERT_TYPE, API_METHODS} from 'contants';
 import {useToasts} from 'contexts/Toast';
 import {Api} from 'hooks/useApi';
 import useForm from 'hooks/useForm';
-import {ITableColumnValue} from 'modules/home/index.d';
-import {useLocation, useNavigate, useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {ROUTES} from 'routes/routes';
-const Edit = () => {
+
+interface IEditProps {
+  employeeInfo: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    university: string;
+  };
+  handleGoBack: () => void;
+}
+
+const Edit = ({employeeInfo, handleGoBack}: IEditProps) => {
   const message = useToasts();
-  const location = useLocation();
   let {id} = useParams();
   const navigate = useNavigate();
-  const state = location.state as ITableColumnValue;
-  const {firstName, lastName, email, university} = state;
   const {formData, handleInputChange} = useForm({
-    firstNameForm: firstName,
-    emailForm: email,
-    lastNameForm: lastName,
-    universityForm: university,
+    firstNameForm: employeeInfo.firstName,
+    emailForm: employeeInfo.email,
+    lastNameForm: employeeInfo.lastName,
+    universityForm: employeeInfo.university,
   });
   const {firstNameForm, lastNameForm, universityForm, emailForm} = formData as {
     firstNameForm: string;
@@ -47,9 +54,7 @@ const Edit = () => {
     } finally {
     }
   };
-  const handleGoBack = () => {
-    navigate(ROUTES.HOME);
-  };
+
   return (
     <>
       <Row gutter={[12, 12]} justify="end">

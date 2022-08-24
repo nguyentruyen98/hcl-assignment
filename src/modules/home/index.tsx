@@ -5,23 +5,16 @@ import {ALERT_TYPE, API_METHODS} from 'contants/index';
 import {useToasts} from 'contexts/Toast';
 import {Api} from 'hooks/useApi';
 import {ITableColumnValue} from 'modules/home/index.d';
-import {useEffect} from 'react';
 import {useNavigate} from 'react-router';
 import {ROUTES} from 'routes/routes';
-import {useDispatch, useSelector} from 'stores';
-import {getEmployeeList} from 'stores/employee';
+import {useGetEmployeeQuery} from 'stores/api/employeeSlice';
 const Home = () => {
   const navigate = useNavigate();
   const message = useToasts();
-  const dispatch = useDispatch();
-  const employeeState = useSelector(state => state.employee);
-  useEffect(() => {
-    dispatch(getEmployeeList());
-  }, []);
 
-  const handleEditEmployee = (record: ITableColumnValue) => {
-    navigate(ROUTES.EDIT.replace(':id', `${record.id}`), {state: record});
-  };
+  const {data: employeeData, isLoading} = useGetEmployeeQuery();
+  console.log(employeeData, isLoading);
+
   const handleRowClick = (id: number) => {
     navigate(ROUTES.DETAIL.replace(':id', `${id}`));
   };
@@ -79,23 +72,19 @@ const Home = () => {
       key: 'id',
       align: 'center',
 
-      render: (id: number, record) => (
-        <>
-          <Button onClick={() => handleEditEmployee(record)} type="primary">
-            Edit
-          </Button>{' '}
-          <Button onClick={() => handleDeleteEmployee(id)} danger>
-            Remove
-          </Button>
-        </>
+      render: (id: number) => (
+        <Button onClick={() => handleDeleteEmployee(id)} danger>
+          Remove
+        </Button>
       ),
     },
   ];
   return (
     <Table
+      loading={isLoading}
       columns={columns}
       pagination={{pageSize: 5}}
-      dataSource={employeeState.employee}
+      dataSource={employeeData?.users}
       rowKey="id"
     />
   );
