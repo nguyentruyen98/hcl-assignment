@@ -1,11 +1,8 @@
 import {Button, Col, Input, Row} from 'antd';
-import {CONFIG} from 'configs/index';
-import {ALERT_TYPE, API_METHODS} from 'contants';
-import {useToasts} from 'contexts/Toast';
-import {Api} from 'hooks/useApi';
 import useForm from 'hooks/useForm';
 import {useNavigate, useParams} from 'react-router-dom';
 import {ROUTES} from 'routes/routes';
+import {useUpdateEmployeeMutation} from 'stores/api/employeeSlice';
 
 interface IEditProps {
   employeeInfo: {
@@ -18,8 +15,8 @@ interface IEditProps {
 }
 
 const Edit = ({employeeInfo, handleGoBack}: IEditProps) => {
-  const message = useToasts();
-  let {id} = useParams();
+  const [updateEmployee, {}] = useUpdateEmployeeMutation();
+  let {id = 0} = useParams();
   const navigate = useNavigate();
   const {formData, handleInputChange} = useForm({
     firstNameForm: employeeInfo.firstName,
@@ -33,26 +30,15 @@ const Edit = ({employeeInfo, handleGoBack}: IEditProps) => {
     universityForm: string;
     emailForm: string;
   };
-  const handleSubmit = () => {
-    try {
-      const data = {
-        firstName: firstNameForm,
-        lastName: lastNameForm,
-        university: universityForm,
-        email: emailForm,
-      };
-      Api({
-        url: `${CONFIG.API.EMPLOYEE}/users/${id}`,
-        method: API_METHODS.PUT,
-        data: JSON.stringify(data),
-      });
-      message('Success', ALERT_TYPE.SUCCESS);
-      navigate(ROUTES.HOME);
-    } catch (err) {
-      console.log(err);
-      message('Fail', ALERT_TYPE.FAIL);
-    } finally {
-    }
+  const handleSubmit = async () => {
+    await updateEmployee({
+      firstName: firstNameForm,
+      lastName: lastNameForm,
+      email: emailForm,
+      university: universityForm,
+      id: +id,
+    });
+    navigate(ROUTES.HOME);
   };
 
   return (

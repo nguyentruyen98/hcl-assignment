@@ -2,6 +2,7 @@ import './index.scss';
 import 'antd/dist/antd.min.css';
 import './styles/main.scss';
 
+import {ToastProvider} from 'contexts/Toast';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {Provider} from 'react-redux';
@@ -16,7 +17,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <ToastProvider>
+        <App />
+      </ToastProvider>
     </Provider>
   </React.StrictMode>,
 );

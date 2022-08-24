@@ -1,15 +1,16 @@
 import {Button, Col, Input, Row} from 'antd';
-import {CONFIG} from 'configs/index';
-import {ALERT_TYPE, API_METHODS} from 'contants/index';
-import {useToasts} from 'contexts/Toast';
-import {Api} from 'hooks/useApi';
 import useForm from 'hooks/useForm';
 import {useNavigate} from 'react-router';
 import {ROUTES} from 'routes/routes';
+import {
+  useCreateEmployeeMutation,
+  useLazyGetEmployeeQuery,
+} from 'stores/api/employeeSlice';
+
 const CreateEmployee = () => {
   const navigate = useNavigate();
-  const message = useToasts();
-
+  const [createEmployee, {}] = useCreateEmployeeMutation();
+  const [getEmployee] = useLazyGetEmployeeQuery();
   const {formData, handleInputChange} = useForm({
     firstName: '',
     lastName: '',
@@ -21,19 +22,9 @@ const CreateEmployee = () => {
     age: number;
   };
   const handleSubmit = async () => {
-    try {
-      await Api({
-        url: `${CONFIG.API.EMPLOYEE}/users/add`,
-        method: API_METHODS.POST,
-        data: JSON.stringify(formData),
-      });
-      message('Success', ALERT_TYPE.SUCCESS);
-      // navigate(ROUTES.HOME);
-    } catch (err) {
-      console.log(err);
-      message('Fail', ALERT_TYPE.FAIL);
-    } finally {
-    }
+    await createEmployee({firstName, lastName, age});
+    handleGoBack();
+    await getEmployee();
   };
   const handleGoBack = () => {
     navigate(ROUTES.HOME);

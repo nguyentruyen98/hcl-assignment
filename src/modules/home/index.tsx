@@ -1,36 +1,25 @@
 import {Avatar, Button, Table} from 'antd';
 import type {ColumnsType} from 'antd/es/table';
-import {CONFIG} from 'configs/index';
-import {ALERT_TYPE, API_METHODS} from 'contants/index';
-import {useToasts} from 'contexts/Toast';
-import {Api} from 'hooks/useApi';
 import {ITableColumnValue} from 'modules/home/index.d';
 import {useNavigate} from 'react-router';
 import {ROUTES} from 'routes/routes';
-import {useGetEmployeeQuery} from 'stores/api/employeeSlice';
+import {
+  useDeleteEmployeeMutation,
+  useGetEmployeeQuery,
+  useLazyGetEmployeeQuery,
+} from 'stores/api/employeeSlice';
 const Home = () => {
   const navigate = useNavigate();
-  const message = useToasts();
-
   const {data: employeeData, isLoading} = useGetEmployeeQuery();
-  console.log(employeeData, isLoading);
+  const [getEmployee, {}] = useLazyGetEmployeeQuery();
+  const [deleteEmployee, {}] = useDeleteEmployeeMutation();
 
   const handleRowClick = (id: number) => {
     navigate(ROUTES.DETAIL.replace(':id', `${id}`));
   };
   const handleDeleteEmployee = async (id: number) => {
-    try {
-      await Api({
-        url: `${CONFIG.API.EMPLOYEE}/users/${id}`,
-        method: API_METHODS.DELETE,
-      });
-      message('Success', ALERT_TYPE.SUCCESS);
-    } catch (err) {
-      console.log(err);
-      message('Fail', ALERT_TYPE.FAIL);
-    } finally {
-      // setCurrentParams({});
-    }
+    await deleteEmployee(id);
+    await getEmployee();
   };
 
   const columns: ColumnsType<ITableColumnValue> = [
