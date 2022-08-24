@@ -46,7 +46,6 @@ export const applicationSlice = createSlice({
       })
       .addMatcher(isFulfilledAction, (state, action: AnyAction) => {
         state.loading = false;
-        console.log(action);
 
         if (action?.meta?.arg?.type === 'query') {
           state.message = '';

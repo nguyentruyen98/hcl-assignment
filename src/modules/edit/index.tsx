@@ -2,7 +2,10 @@ import {Button, Col, Input, Row} from 'antd';
 import useForm from 'hooks/useForm';
 import {useNavigate, useParams} from 'react-router-dom';
 import {ROUTES} from 'routes/routes';
-import {useUpdateEmployeeMutation} from 'stores/api/employeeSlice';
+import {
+  useLazyGetEmployeeQuery,
+  useUpdateEmployeeMutation,
+} from 'stores/api/employeeSlice';
 
 interface IEditProps {
   employeeInfo: {
@@ -18,6 +21,8 @@ const Edit = ({employeeInfo, handleGoBack}: IEditProps) => {
   const [updateEmployee, {}] = useUpdateEmployeeMutation();
   let {id = 0} = useParams();
   const navigate = useNavigate();
+  const [getEmployee] = useLazyGetEmployeeQuery();
+
   const {formData, handleInputChange} = useForm({
     firstNameForm: employeeInfo.firstName,
     emailForm: employeeInfo.email,
@@ -39,6 +44,7 @@ const Edit = ({employeeInfo, handleGoBack}: IEditProps) => {
       id: +id,
     });
     navigate(ROUTES.HOME);
+    await getEmployee();
   };
 
   return (
