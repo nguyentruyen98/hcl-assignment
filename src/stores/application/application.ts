@@ -35,7 +35,6 @@ export const applicationSlice = createSlice({
   initialState,
   reducers: {
     setLoading: (state, action: PayloadAction<boolean>) => {
-      console.log(action);
       state.loading = action.payload;
     },
   },

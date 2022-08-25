@@ -3,23 +3,21 @@ import type {ColumnsType} from 'antd/es/table';
 import {ITableColumnValue} from 'modules/home/index.d';
 import {useNavigate} from 'react-router';
 import {ROUTES} from 'routes/routes';
-import {
-  useDeleteEmployeeMutation,
-  useGetEmployeeQuery,
-  useLazyGetEmployeeQuery,
-} from 'stores/api/employeeSlice';
+import {useDispatch, useSelector} from 'stores';
+import {useGetEmployeeQuery} from 'stores/api/employeeSlice';
+import {deleteEmployee} from 'stores/employee';
 const Home = () => {
   const navigate = useNavigate();
-  const {data: employeeData, isLoading} = useGetEmployeeQuery();
-  const [getEmployee, {}] = useLazyGetEmployeeQuery();
-  const [deleteEmployee, {}] = useDeleteEmployeeMutation();
+  const {isLoading} = useGetEmployeeQuery();
+  const dispatch = useDispatch();
+
+  const {employees} = useSelector(state => state.employee);
 
   const handleRowClick = (id: number) => {
     navigate(ROUTES.DETAIL.replace(':id', `${id}`));
   };
   const handleDeleteEmployee = async (id: number) => {
-    await deleteEmployee(id);
-    await getEmployee();
+    dispatch(deleteEmployee(id));
   };
 
   const columns: ColumnsType<ITableColumnValue> = [
@@ -73,7 +71,7 @@ const Home = () => {
       loading={isLoading}
       columns={columns}
       pagination={{pageSize: 5}}
-      dataSource={employeeData?.users}
+      dataSource={employees}
       rowKey="id"
     />
   );

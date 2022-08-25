@@ -6,9 +6,11 @@ import {
 } from 'react-redux';
 import {apiSlice} from 'stores/api/employeeSlice';
 import {applicationSlice} from 'stores/application/application';
+import {employeeSlice} from 'stores/employee';
 export const store = configureStore({
   reducer: {
     application: applicationSlice.reducer,
+    employee: employeeSlice.reducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
   middleware: getDefaultMiddleware =>
