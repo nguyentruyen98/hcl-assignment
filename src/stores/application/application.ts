@@ -1,7 +1,6 @@
 import {
   AnyAction,
   AsyncThunk,
-  configureStore,
   createSlice,
   PayloadAction,
 } from '@reduxjs/toolkit';
@@ -62,12 +61,6 @@ export const applicationSlice = createSlice({
           state.alertType = 'SUCCESS';
         }
       });
-  },
-});
-
-export const store = configureStore({
-  reducer: {
-    application: applicationSlice.reducer,
   },
 });
 
