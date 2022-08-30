@@ -65,3 +65,4 @@ export const applicationSlice = createSlice({
 });
 
 export const {setLoading} = applicationSlice.actions;
+export {isFulfilledAction, isPendingAction, isRejectedAction};

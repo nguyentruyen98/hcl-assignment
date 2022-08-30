@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export interface AnyObject {
   [key: string]: any;
 }
@@ -9,3 +10,8 @@ export type ApiMethodsType = Record<
 
 // export type AlertType = 'success' | 'fail';
 export type AlertType = Record<'SUCCESS' | 'FAIL', 'success' | 'fail'>;
+
+export enum Headers {
+  Authorization = 'authorization',
+  Accept = 'Accept',
+}
